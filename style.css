@@ -4,8 +4,13 @@
 } */
 
 #myCanvas {
+	/* ABFFAB */
     background: #ABFFAB;
     padding: 0;
     display: block;
     margin: 0 auto;
+}
+
+body {
+		background-color: #040404;
 }
