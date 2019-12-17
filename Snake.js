@@ -6,14 +6,8 @@
 //    col: "#BBBBBB"
 // }
 
-const snake_size = 20;
-//this is to add spaces between blocks
-const snake_draw_percent = 0.9; //this is to draw a portion of the block...
 
-var next_move_time = 0; //time at which snake should move
-const time_between_moving = 50;  //time between moving snake in milliseconds
-
-var snake_col_val= 0;   //def col: 0x106410;
+var snake_col_val= 0x106410;   //def col: 0x106410;
 // change col value : 0xA00
 
 function Snake (col) {
@@ -53,7 +47,7 @@ Snake.prototype.draw_trail = function () {
     if (this.next != null) {
       this.next.draw_trail ();
     }
-    DrawRect (this.x, this.y, snake_size*snake_draw_percent, snake_size*snake_draw_percent, this.col, "f");
+    DrawRect (this.x, this.y, snake_draw_size, snake_draw_size, this.col, "f");
 
 }
 
@@ -79,22 +73,22 @@ Snake.prototype.check_collision = function (x, y) {
     }
 }
 
-function reset_snake () {
+function reset_snake (head) {
 
     snake_col_val = 0x106410;
 
-    var head = new Snake (get_col_from_value(snake_col_val));
+    // var head = new Snake (get_col_from_value(snake_col_val));
     head.x = width/2;
     head.y = height/2;
     head.x = Math.floor (head.x/snake_size) * snake_size;
     head.y = Math.floor (head.y/snake_size) * snake_size;
-    return head;
+
+    head.add_block ();
+    // return head;
 }
 
 function move_snake_head_and_return_dead (dir, head) {
 
-    var curr_time = (new Date ()).getTime ();
-    if (next_move_time < curr_time) {
         //its time to move the snake
         switch (dir) {
             case 1:
@@ -125,8 +119,7 @@ function move_snake_head_and_return_dead (dir, head) {
             case 2:
             //right
               head.x += snake_size;
-
-              if (head.x >= width) {
+                if (head.x >= width) {
                   //see the reason for >= in case 3
                   head.x -= snake_size;
                   return 1;
@@ -143,8 +136,5 @@ function move_snake_head_and_return_dead (dir, head) {
               }
               break;
         }
-        //change the next move time
-        next_move_time = curr_time + time_between_moving;
-  }
   return 0;
 }
