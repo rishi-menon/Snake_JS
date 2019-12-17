@@ -6,8 +6,9 @@
 //    col: "#BBBBBB"
 // }
 
-
-var snake_col_val= 0x106410;   //def col: 0x106410;
+const snake_final_col = 0x20ffff;
+const snake_initial_col = 0x1000ff;
+var snake_col_val= snake_initial_col;   //def col: 0x106410;
 // change col value : 0xA00
 
 function Snake (col) {
@@ -23,10 +24,11 @@ Snake.prototype.add_block = function () {
       this.update_trail ();
 
       //update snake colour
-      snake_col_val += 0x800;
-      if (snake_col_val > 0x10EF10) {
-        snake_col_val = 0x10EF10;
-      }
+      // snake_col_val += 0x800;
+			snake_col_val = lerp_colour (snake_col_val, snake_final_col, 0.08);
+      // if (snake_col_val > 0x10EF10) {
+      //   snake_col_val = 0x10EF10;
+      // }
 
     } else {
       this.next.add_block ();
@@ -55,9 +57,6 @@ Snake.prototype.delete_trail = function () {
     if (this.next != null) {
       this.next.delete_trail ();
     }
-    // delete this.col;
-    // delete this.x;
-    // delete this.y;
     this.next = null;
 }
 
@@ -75,7 +74,7 @@ Snake.prototype.check_collision = function (x, y) {
 
 function reset_snake (head) {
 
-    snake_col_val = 0x106410;
+    snake_col_val = snake_initial_col;
 
     // var head = new Snake (get_col_from_value(snake_col_val));
     head.x = width/2;
@@ -87,7 +86,7 @@ function reset_snake (head) {
     // return head;
 }
 
-function move_snake_head_and_return_dead (dir, head) {
+function move_snake_head_and_return_out_of_screen (dir, head) {
 
         //its time to move the snake
         switch (dir) {

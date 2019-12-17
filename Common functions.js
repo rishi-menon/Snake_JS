@@ -28,12 +28,12 @@ function lerp_colour (a, b, value) {
 		var red = lerp (a>>16, b>>16, value);
 		var green = lerp ((a>>8) & 0xFF, (b>>8) & 0xFF, value);
 		var blue = lerp (a & 0xFF, b & 0xFF, value);
-		return (red<<16 | green<<8 | blue);
+		return ((red<<16) | (green<<8) | (blue));
 }
 function lerp (a, b, value) {
 		return a + (b-a) * value;
 }
-// 
+//
 // function DrawCircle (x, y, r, col) {
 //     ctx.beginPath ();
 //     ctx.fillStyle = col;
