@@ -6,7 +6,7 @@
 //    col: "#BBBBBB"
 // }
 
-const snake_final_col = 0x20ffff;
+const snake_final_col = 0x10ccff;
 const snake_initial_col = 0x1000ff;
 var snake_col_val= snake_initial_col;   //def col: 0x106410;
 // change col value : 0xA00
