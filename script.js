@@ -16,7 +16,7 @@ var player_score = 2;
 //animation variables
 const animate_completion_time = 0.6; //in seconds
 const animate_final_colour = 0x444444;
-const animate_initial_colour = 0x91e2ff;
+const animate_initial_colour = 0x80ee80;
 var animate_colour_value = animate_initial_colour;
 var animate_percent = 0;
 
