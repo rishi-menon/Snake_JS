@@ -16,7 +16,7 @@ var player_score = 2;
 //animation variables
 const animate_completion_time = 0.6; //in seconds
 const animate_final_colour = 0x444444;
-const animate_initial_colour = 0x91e2ff;
+const animate_initial_colour = 0x80ee80;
 var animate_colour_value = animate_initial_colour;
 var animate_percent = 0;
 
@@ -27,12 +27,17 @@ var fixed_update_interval = 0;
 const dirs_size = 2;
 var dirs_list = []; //can store only next two directions
 
+var touch_start = {x: -1, y: -1};
+var touch_move = {x: -1, y: -1};
+
+const touch_min_delta = 10;
+
+
 window.onload = function () {
     canvas = document.getElementById ("myCanvas");
     ctx = canvas.getContext ("2d");
     width = canvas.width;
     height = canvas.height;
-
     Initialise_Game ();
 
     document.addEventListener ("keydown", function (evt) {
@@ -46,56 +51,7 @@ window.onload = function () {
                   break;
             }
         } else {
-						//new dir should latest dir which should be the last element of a list
-						//or the dir if the list is empty
-						var new_dir = (dirs_list.length > 0) ? dirs_list[dirs_list.length - 1] : dir;
-						var old_dir = new_dir;
-
-            //Playerr is alivee
-            switch (evt.keyCode) {
-              case 68:
-              case 39:
-              //right
-                //if it is 1 then its going either up or down
-                if (new_dir % 2 == 1) {
-                    new_dir = 2;
-                }
-                break;
-
-              case 65:
-              case 37:
-              //left
-                //if it is 1 then its going either up or down
-                if (new_dir % 2 == 1) {
-                    new_dir = 4;
-                }
-                break;
-
-              case 87:
-              case 38:
-                //up
-                //if it is 0 then its going either left or right
-                if (new_dir % 2 == 0) {
-                    new_dir = 1;
-                }
-                break;
-
-              case 40:
-              case 83:
-              //down
-              //if it is 0 then its going either left or right
-                if (new_dir % 2 == 0) {
-                    new_dir = 3;
-                }
-                break;
-            }
-
-						//check whether to add direction to the list or not
-						//add if there is a new direction AND if size is left
-						if (new_dir != old_dir && dirs_list.length < dirs_size) {
-								//add direction to the list
-								dirs_list.push (new_dir);
-						}
+            move_player_in_dir (evt.keyCode);
         }
 
         // for debugging purposes
@@ -105,6 +61,73 @@ window.onload = function () {
         // }
         // console.log(evt.keyCode);
     });
+
+
+    document.addEventListener ("touchstart", function (evt) {
+      if (game_over_screen == 0) {
+        var touch = evt.touches[0];
+        touch_start.x = evt.pageX;
+        touch_start.y = evt.pageY;
+        event.preventDefault();
+      }
+      
+    });
+
+    document.addEventListener ("touchmove", function (evt) {
+      if (game_over_screen == 0) {
+        var touch = evt.touches[0];
+
+        touch_move.x = evt.pageX;
+        touch_move.y = evt.pageY;
+
+        event.preventDefault();
+      }
+
+    });
+
+    document.addEventListener ("touchend", function (evt) {
+      if (game_over_screen == 1) {
+        Initialise_Game ();
+     
+      } else {
+        //calculate swipe direction
+
+        if (touch_move.x != -1 && touch_start.x != -1) {
+          var dx = touch_move.x - touch_start.x;
+          if (dx > touch_min_delta) {
+            //right
+            move_player_in_dir (68);//simulate right button press
+
+          } else if (dx < -touch_min_delta) {
+            //left
+             move_player_in_dir (65);
+          }
+        }
+
+        if (touch_move.y != -1 && touch_start.y != -1) {
+          var dy = touch_move.y - touch_start.y;
+          if (dy > touch_min_delta) {
+            //down
+            move_player_in_dir (83);//simulate right button press
+
+          } else if (dy < -touch_min_delta) {
+            //up
+             move_player_in_dir (87);
+          }
+        }
+
+
+
+      }
+
+      touch_start.x = -1;
+      touch_start.y = -1;
+      touch_move.x = -1;
+      touch_move.y = -1;
+
+      event.preventDefault();
+
+    }); 
 }
 
 function Initialise_Game () {
@@ -114,6 +137,13 @@ function Initialise_Game () {
 	animate_percent = 0;
 	fps = starting_fps;
 	player_score = 2;
+
+  touch_start.x = -1;
+  touch_start.y = -1;
+  touch_move.x = -1;
+  touch_move.y = -1;
+      
+
   reset_food ();
 
   if (main_snake != null) {
@@ -190,20 +220,13 @@ function FixedUpdate () {
           if (main_snake.x == food_x && main_snake.y == food_y) {
             //player ate food... grow and reset food
             main_snake.add_block ();
-						reset_food ();
-
-
-						player_score += 1;
-						//change speed of game if necessary
-						if (player_score % 5 == 0) {
-							if (player_score >= 25) {
-								//from now on, increment fps only by 1 every 5 levels
-								fps -= 1;
-							}
-							fps += 2;
-
-							change_fixed_update ();
-						}
+			reset_food ();
+			player_score += 1;
+			//change speed of game if necessary
+			if (player_score % 5 == 0) {
+				fps += 1;
+				change_fixed_update ();
+			}
           }
       }
     }

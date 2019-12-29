@@ -33,11 +33,58 @@ function lerp_colour (a, b, value) {
 function lerp (a, b, value) {
 		return a + (b-a) * value;
 }
-//
-// function DrawCircle (x, y, r, col) {
-//     ctx.beginPath ();
-//     ctx.fillStyle = col;
-//     ctx.arc (x, y, r, 0, 2*Math.PI, true);
-//     ctx.closePath ();
-//     ctx.fill ();
-// }
+
+function move_player_in_dir (key) {
+
+    //new dir should latest dir which should be the last element of a list
+    //or the dir if the list is empty
+    var new_dir = (dirs_list.length > 0) ? dirs_list[dirs_list.length - 1] : dir;
+    var old_dir = new_dir;
+
+    //Playerr is alivee
+    switch (key) {
+      case 68:
+      case 39:
+      //right
+        //if it is 1 then its going either up or down
+        if (new_dir % 2 == 1) {
+            new_dir = 2;
+        }
+        break;
+
+      case 65:
+      case 37:
+      //left
+        //if it is 1 then its going either up or down
+        if (new_dir % 2 == 1) {
+            new_dir = 4;
+        }
+        break;
+
+      case 87:
+      case 38:
+        //up
+        //if it is 0 then its going either left or right
+        if (new_dir % 2 == 0) {
+            new_dir = 1;
+        }
+        break;
+
+      case 40:
+      case 83:
+      //down
+      //if it is 0 then its going either left or right
+        if (new_dir % 2 == 0) {
+            new_dir = 3;
+        }
+        break;
+    }
+
+    //check whether to add direction to the list or not
+    //add if there is a new direction AND if size is left
+    if (new_dir != old_dir && dirs_list.length < dirs_size) {
+            //add direction to the list
+            dirs_list.push (new_dir);
+    }
+}  
+
